@@ -3,15 +3,28 @@ import Head from "next/head";
 
 import { api, type RouterOutputs } from "~/utils/api";
 import { SignInButton, useAuth, useUser } from "@clerk/nextjs";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime"
+import Image from "next/image";
+
+dayjs.extend(relativeTime)
 
 type PostWithAuthor = RouterOutputs['posts']['getAll'][number]
 const PostView = (props: PostWithAuthor) => {
-    const {post, author} = props
+    const { post, author } = props
     return (
-        <div className="flex gap-3 w-full p-4 border-b border-slate-200 justify-center">
-            <img className="h-14 w-14 rounded-full" src={author.profileImageUrl} alt={author.username} />
-            <div className="flex flex-col">
-                <div>{`@${author.username}`}</div>
+        <div className="flex gap-3 w-full p-4 border-b border-slate-200">
+            <Image
+                height={56}
+                width={56}
+                className="rounded-full"
+                src={author.profileImageUrl}
+                alt={author.username} />
+            <div className="flex flex-col grow">
+                <div className="text-slate-300">
+                    <span className="font-semibold">{`@${author.username}`}</span>
+                    <span>{` · ${dayjs(post.createdAt).fromNow()}`}</span>
+                </div>
                 <div>{post.content}</div>
             </div>
         </div>
@@ -19,13 +32,18 @@ const PostView = (props: PostWithAuthor) => {
 }
 
 const CreatePostWizard = () => {
-    const {user} = useUser()
+    const { user } = useUser()
 
     if (!user) return null
 
     return (
         <div className="flex gap-3 w-full">
-            <img className="h-14 w-14 rounded-full" src={user.profileImageUrl} alt={user.username} />
+            <Image
+                height={56}
+                width={56}
+                className="h-14 w-14 rounded-full"
+                src={user.profileImageUrl}
+                alt={user.username!} />
             <input type="text" placeholder="Type some emojis!" className="bg-transparent grow outline-none" />
         </div>
     )
