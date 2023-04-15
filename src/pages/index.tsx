@@ -10,6 +10,7 @@ import { LoadingPage, LoadingSpinner } from "~/components/loading";
 import { useState } from "react";
 import { postsRouter } from "~/server/api/routers/posts";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 dayjs.extend(relativeTime)
 
@@ -26,8 +27,12 @@ const PostView = (props: PostWithAuthor) => {
                 alt={author.username} />
             <div className="flex flex-col grow">
                 <div className="text-slate-300">
-                    <span className="font-semibold">{`@${author.username}`}</span>
-                    <span>{` · ${dayjs(post.createdAt).fromNow()}`}</span>
+                    <Link href={`/@${author.username}`}>
+                        <span className="font-semibold">{`@${author.username}`}</span>
+                    </Link>
+                    <Link href={`post/${post.id}`}>
+                        <span>{` · ${dayjs(post.createdAt).fromNow()}`}</span>
+                    </Link>
                 </div>
                 <div className="text-2xl">{post.content}</div>
             </div>
