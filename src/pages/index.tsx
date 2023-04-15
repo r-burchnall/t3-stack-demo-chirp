@@ -7,6 +7,8 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime"
 import Image from "next/image";
 import { LoadingPage, LoadingSpinner } from "~/components/loading";
+import { useState } from "react";
+import { postsRouter } from "~/server/api/routers/posts";
 
 dayjs.extend(relativeTime)
 
@@ -34,6 +36,15 @@ const PostView = (props: PostWithAuthor) => {
 
 const CreatePostWizard = () => {
     const { user, } = useUser()
+    const [input, setInput] = useState('')
+
+    const ctx = api.useContext();
+    const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
+        onSuccess: () => {
+            setInput('')
+            ctx.posts.invalidate()
+        }
+    })
 
     if (!user) return null
 
@@ -45,7 +56,17 @@ const CreatePostWizard = () => {
                 className="h-14 w-14 rounded-full"
                 src={user.profileImageUrl}
                 alt={user.username!} />
-            <input type="text" placeholder="Type some emojis!" className="bg-transparent grow outline-none" />
+            <input
+                type="text"
+                placeholder="Type some emojis!"
+                className="bg-transparent grow outline-none disabled:opacity-50"
+                value={input}
+                disabled={isPosting}
+                onChange={(e) => setInput(e.currentTarget.value)} />
+                <button onClick={() => {
+                    mutate({ content: input })
+                    setInput('')
+                }}>Post</button>
         </div>
     )
 }
@@ -63,7 +84,7 @@ const Feed = () => {
 
     return (
         <div className="flex flex-col">
-            {data?.map((fullPost) => (
+            {data.map((fullPost) => (
                 <PostView {...fullPost} key={fullPost.post.id} />
             ))}
         </div>
