@@ -51,21 +51,14 @@ const SinglePostPage: NextPage<{ username: string }> = ({ username }) => {
     );
 };
 
-import { createServerSideHelpers } from '@trpc/react-query/server';
-import { appRouter } from "~/server/api/root";
-import SuperJSON from "superjson";
-import { prisma } from "~/server/db";
 import { PageLayout } from "~/components/layout";
 import { LoadingPage } from "~/components/loading";
 import { PostView } from "~/components/PostView";
+import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 
 
 export const getStaticProps: GetStaticProps = async (context) => {
-    const ssg = createServerSideHelpers({
-        router: appRouter,
-        ctx: { prisma, userId: null },
-        transformer: SuperJSON
-    });
+    const ssg = generateSSGHelper();
 
     const slug = context.params?.slug
     if (typeof slug !== 'string') throw new Error('Slug is not a string')
