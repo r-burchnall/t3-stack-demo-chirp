@@ -9,6 +9,7 @@ import Image from "next/image";
 import { LoadingPage, LoadingSpinner } from "~/components/loading";
 import { useState } from "react";
 import { postsRouter } from "~/server/api/routers/posts";
+import toast from "react-hot-toast";
 
 dayjs.extend(relativeTime)
 
@@ -43,6 +44,14 @@ const CreatePostWizard = () => {
         onSuccess: () => {
             setInput('')
             ctx.posts.invalidate()
+        },
+        onError: (e) => {
+            const errorMessage = e.data?.zodError?.fieldErrors.content;
+            if (!errorMessage || !errorMessage[0]) return;
+
+            toast.error(`Failed to post: ${errorMessage[0]}`, {
+                position: "bottom-center"
+            })
         }
     })
 
@@ -62,11 +71,24 @@ const CreatePostWizard = () => {
                 className="bg-transparent grow outline-none disabled:opacity-50"
                 value={input}
                 disabled={isPosting}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                        e.preventDefault()
+                        mutate({ content: input })
+                    }
+                }}
                 onChange={(e) => setInput(e.currentTarget.value)} />
-                <button onClick={() => {
+            {input !== "" && !isPosting && <button
+                onClick={() => {
                     mutate({ content: input })
-                    setInput('')
-                }}>Post</button>
+                }}>
+                Post
+            </button>}
+            {isPosting && (
+                <div className="flex justify-center items-center">
+                    <LoadingSpinner size={20} />
+                </div>
+            )}
         </div>
     )
 }

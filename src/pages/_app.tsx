@@ -3,10 +3,12 @@ import type {AppProps} from "next/app";
 
 import {api} from "~/utils/api";
 import "~/styles/globals.css";
+import { Toaster } from "react-hot-toast";
 
 function MyApp({ Component, pageProps }: AppProps) {
     return (
         <ClerkProvider {...pageProps}>
+            <Toaster/>
             <Component {...pageProps} />
         </ClerkProvider>
     );
