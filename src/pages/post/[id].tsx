@@ -1,24 +1,6 @@
 import { type GetStaticProps, type NextPage } from "next";
 import Head from "next/head";
-import Image from 'next/image'
-
 import { api } from "~/utils/api";
-
-const ProfileFeed = (props: {userId: string}) => {
-    const { data, isLoading } = api.posts.getPostsForUserId.useQuery({ userId: props.userId })
-
-    if (isLoading) return <LoadingPage />
-
-    if (!data || data.length === 0) return <div>User has not posted</div>
-
-    return (
-        <div className="flex flex-col">
-            {data.map((fullPost) => (
-                <PostView {...fullPost} key={fullPost.post.id} />
-            ))}
-        </div>
-    )
-}
 
 const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
     const { data } = api.posts.getById.useQuery({ id })
@@ -38,7 +20,6 @@ const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
 };
 
 import { PageLayout } from "~/components/layout";
-import { LoadingPage } from "~/components/loading";
 import { PostView } from "~/components/PostView";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 
