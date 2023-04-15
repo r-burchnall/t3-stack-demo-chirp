@@ -6,14 +6,9 @@ import { Redis } from "@upstash/redis";
 import { z } from "zod";
 
 import { createTRPCRouter, privateProcedure, publicProcedure } from "~/server/api/trpc";
+import { filterUsersForClient } from "~/server/helpers/filterUsersForClient";
 
-const filterUsersForClient = (user: User) => {
-    return {
-        id: user.id,
-        username: user.username,
-        profileImageUrl: user.profileImageUrl,
-    }
-}
+
 
 // Will allow 3 requests per minute
 const ratelimit = new Ratelimit({
