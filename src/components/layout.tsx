@@ -1,4 +1,4 @@
-export const PageLayout = ({ children }: React.PropsWithChildren<{}>) => {
+export const PageLayout = ({ children }: React.PropsWithChildren) => {
     return (
         <main
             className="flex justify-center h-screen">

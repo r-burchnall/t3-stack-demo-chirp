@@ -34,7 +34,7 @@ const SinglePostPage: NextPage<{ username: string }> = ({ username }) => {
                 <div className="bg-slate-600 h-48 relative">
                     <Image
                         src={data.user.profileImageUrl}
-                        alt={data.user.username!}
+                        alt={data.user.username ?? ''}
                         height={128}
                         width={128}
                         className="rounded-full -mb-[64px] absolute bottom-0 left-4 border-black border-4"
@@ -42,7 +42,7 @@ const SinglePostPage: NextPage<{ username: string }> = ({ username }) => {
                 </div>
                 <div className="h-[64px] spacer"></div>
                 <div className="p-4">
-                    <span className="text-2xl font-bold">{`@${data.user.username}`}</span>
+                    <span className="text-2xl font-bold">{`@${data.user.username ?? ''}`}</span>
                 </div>
                 <div className="border-b w-full border-slate-200" />
                 <ProfileFeed userId={data.user.id} />
@@ -67,10 +67,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
         transformer: SuperJSON
     });
 
-    let slug = context.params?.slug
+    const slug = context.params?.slug
     if (typeof slug !== 'string') throw new Error('Slug is not a string')
 
-    let username = slug.replace("@", '')
+    const username = slug.replace("@", '')
 
     await ssg.profile.getUserByUsername.prefetch({
         username
